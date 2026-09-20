@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PIXELWAX — tiny vinyl corner</title>
+<meta name="description" content="PIXELWAX is a retro pixel-art turntable in the browser. Drop your own audio files, build albums with generated covers, and spin them on an animated deck with EQ, VU meter and pitch control.">
+<meta name="theme-color" content="#14121a">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="PIXELWAX — tiny vinyl corner">
+<meta property="og:description" content="A retro pixel-art turntable in the browser. Drop songs, build albums, spin wax.">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💿</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-theme="dark">
+
+
+<div class="intro">
+  <div class="big pxfont">PIXELWAX</div>
+  <small>warming up the tubes…</small>
+</div>
+
+<div class="crt"></div>
+
+<div class="wrap">
+  <header>
+    <div class="logo pxfont">PIXELWAX</div>
+    <div class="tagline">// tiny vinyl corner of the internet</div>
+    <div class="spacer"></div>
+    <div class="themes" id="themes"></div>
+    <div class="clock" id="clock">00:00</div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT SIDEBAR : albums -->
+    <section class="panel sidebar">
+      <h2>▤ ALBUMS</h2>
+      <button class="pbtn grn block" id="btnNewAlbum" style="margin-bottom:12px;">+ NEW ALBUM</button>
+      <div class="shelf" id="shelf"></div>
+      <div class="drop" id="dropAlbum" style="margin-top:12px;">
+        ⬇ drop songs to make a new album
+        <input type="file" id="fileNewAlbum" accept="audio/*" multiple style="display:none">
+      </div>
+    </section>
+
+    <!-- CENTER : turntable -->
+    <section class="panel deck">
+      <h2>▶ NOW SPINNING</h2>
+      <div class="tt" id="tt">
+        <div class="platter"><div class="shine"></div></div>
+        <div class="vinyl" id="vinyl">
+          <div class="art" id="vinylArt"></div>
+          <div class="label" id="vinylLabel">NO DISC</div>
+          <div class="hole"></div>
+        </div>
+        <div class="arm"><div class="pivot"></div><div class="rod"></div><div class="head"></div></div>
+      </div>
+
+      <div class="readout">
+        <div class="marquee"><span id="nowPlaying">pick an album on the left — or press PLAY</span></div>
+        <div class="time" id="time">0:00 / 0:00</div>
+      </div>
+
+      <div class="vu" id="vu"></div>
+
+      <div class="transport">
+        <button class="tbtn" id="btnPrev" title="previous track">⏮</button>
+        <button class="tbtn" id="btnPlay" title="play / pause">▶</button>
+        <button class="tbtn" id="btnStop" title="stop">⏹</button>
+        <button class="tbtn" id="btnNext" title="next track">⏭</button>
+        <button class="tbtn wide on" id="btnDemo">▶ PLAY</button>
+        <div class="led" id="led"></div>
+      </div>
+
+      <div class="eq">
+        <div class="band"><label>BASS</label><input type="range" id="eqB" min="-12" max="12" value="0"></div>
+        <div class="band"><label>MID</label><input type="range" id="eqM" min="-12" max="12" value="0"></div>
+        <div class="band"><label>TREB</label><input type="range" id="eqT" min="-12" max="12" value="0"></div>
+      </div>
+      <div class="eq" style="grid-template-columns:1fr 1fr;">
+        <div class="band"><label>VOLUME</label><input type="range" id="vol" min="0" max="100" value="80"></div>
+        <div class="band"><label>PITCH</label><input type="range" id="pitch" min="50" max="150" value="100"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT : track list of selected album -->
+    <section class="panel rightbar">
+      <h2 id="trackHeader">♫ TRACKS</h2>
+      <div class="tracklist" id="tracklist"></div>
+      <div class="drop" id="dropTracks">
+        ⬇ drop songs to add to this album
+        <input type="file" id="fileAddTracks" accept="audio/*" multiple style="display:none">
+      </div>
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <button class="pbtn alt block" id="btnEditAlbum">✎ EDIT ALBUM</button>
+        <button class="pbtn block" id="btnPlayAll">▶ PLAY ALL</button>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    hand-soldered in a basement · <b>PIXELWAX</b> · no records were harmed ·
+    space = play/pause · ← → = skip
+  </footer>
+</div>
+
+<!-- album modal -->
+<div class="modal" id="modal">
+  <div class="mbox">
+    <h3 id="modalTitle">NEW ALBUM</h3>
+    <div class="field"><label>album title</label><input type="text" id="inTitle" placeholder="midnight loops"></div>
+    <div class="field"><label>artist</label><input type="text" id="inArtist" placeholder="unknown"></div>
+    <div class="field"><label>or pick a template</label><div class="templates" id="templates"></div></div>
+    <div class="field"><label>label color</label><div class="swatches" id="swatches"></div></div>
+    <div class="field"><label>cover pattern</label><div class="patterns" id="patterns"></div></div>
+    <div class="mrow">
+      <button class="pbtn alt" id="btnCancel">CANCEL</button>
+      <button class="pbtn grn" id="btnSave">SAVE</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="audio" crossorigin="anonymous"></audio>
+
+<script src="js/app.js"></script>
+</body>
+</html>
